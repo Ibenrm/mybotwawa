@@ -1,5 +1,5 @@
 import { Client, LocalAuth } from "whatsapp-web.js";
-import qrcode from "qrcode-terminal";
+import qrcode from "qrcode";
 import commands from "./commands";
 
 const client = new Client({
@@ -25,8 +25,9 @@ const client = new Client({
       authStrategy: new LocalAuth(),
 });
 
-client.on('qr', (qr) => {
-    qrcode.generate(qr, {small: true})
+client.on('qr', async (qr) => {
+    const smallQR = await qrcode.toString(qr, { type: 'terminal', small: true });
+    console.log(smallQR);
 });
 
 client.on('ready', () => {
