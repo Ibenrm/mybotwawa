@@ -17,11 +17,11 @@ abstract class Command {
 
     handle(msg: Message){
         const prefix = msg.body[0];
-        const argAll: string[] = msg.body.slice(1).split(" "); // ngambil semua pesan tanpa prefix
+        const argAll: string[] = msg.body.slice(1).split(" ");
         if(this.prefixs.includes(prefix)){
             const cmdNoPrefix = argAll[0].toLocaleLowerCase();
             if(this.alias.includes(cmdNoPrefix)){
-                const args = argAll.slice(1); // mengambil semua text tanpa command
+                const args = argAll.slice(1); 
                 this.execute(msg, args);
             }
         }

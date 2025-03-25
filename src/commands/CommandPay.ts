@@ -33,8 +33,6 @@ export class CommandPay extends Command {
                     if (qrImage) {
                         const media = new MessageMedia("image/png", qrImage.toString("base64"));
                         await msg.reply(media, undefined, { caption: `✅ Scan QRIS ini untuk pembayaran.\n\n🆔 Order ID: *${orderId}*\n💰 Jumlah: Rp ${amount.toLocaleString("id-ID")}` });
-
-                        // 🔄 Cek status pembayaran secara real-time
                         this.checkPaymentLoop(orderId, msg);
                     } else {
                         msg.reply(`⚠️ Gagal mengambil gambar QR Code. Silakan scan manual: ${paymentResult.qr_url}`);
@@ -50,8 +48,6 @@ export class CommandPay extends Command {
                     msg.reply(`⚠️ ${paymentResult.error}`);
                 } else {
                     msg.reply(`✅ Pembayaran berhasil dibuat!\n\n🆔 Order ID: *${orderId}*\n🏦 Bank: *${method.toUpperCase()}*\n🔢 VA Number: *${paymentResult.va_number}*\n💰 Jumlah: Rp ${amount.toLocaleString("id-ID")}`);
-
-                    // 🔄 Cek status pembayaran secara real-time
                     this.checkPaymentLoop(orderId, msg);
                 }
                 break;
@@ -71,7 +67,7 @@ export class CommandPay extends Command {
             });
 
             const response = await coreApi.charge({
-                payment_type: "gopay", // QRIS pakai metode Gopay
+                payment_type: "gopay", 
                 transaction_details: { order_id: orderId, gross_amount: amount },
                 gopay: { enable_callback: false, callback_url: "" }
             });
@@ -137,7 +133,7 @@ export class CommandPay extends Command {
                 const status = response.data.transaction_status;
     
                 if (status === "settlement") {
-                    msg.reply(`✅ *Pembayaran Berhasil!* 🎉\n\n🆔 Order ID: ${orderId}\n💰 Jumlah: Rp ${response.data.gross_amount}`);
+                    msg.reply(`✅ *Pembayaran Berhasil!* 🎉\n\n🆔 Order ID: ${orderId}\n💰 Jumlah: Rp ${response.data.gross_amount.toLocaleString("id-ID")}`);
                     isPaid = true;
                     break;
                 } else if (status === "expire" || status === "cancel") {
@@ -145,8 +141,6 @@ export class CommandPay extends Command {
                     isPaid = true;
                     break;
                 }
-    
-                //Tunggu 10 detik sebelum cek lagi
                 await new Promise(resolve => setTimeout(resolve, 10000));
     
             } catch (error: any) {

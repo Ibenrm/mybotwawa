@@ -39,23 +39,17 @@ export class CommandMusikYT extends Command {
                 const mp3Url = response.data.url;
                 const filePath = path.join(__dirname, 'temp.mp3'); 
 
-                // Download file MP3 menggunakan axios
                 const writer = fs.createWriteStream(filePath);
                 const download = await axios({
                     url: mp3Url,
                     method: 'GET',
                     responseType: 'stream'
                 });
-
-                // Pipe stream ke file
                 download.data.pipe(writer);
 
                 writer.on('finish', async () => {
-                    // Kirim file setelah selesai diunduh
                     const media = MessageMedia.fromFilePath(filePath);
                     await msg.reply(media);
-
-                    // Hapus file sementara setelah dikirim
                     fs.unlinkSync(filePath);
                 });
 

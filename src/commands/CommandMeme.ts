@@ -13,11 +13,7 @@ export class CommandMeme extends Command {
             // Fetch meme dari API meme-api.com
             const response = await axios.get("https://meme-api.com/gimme");
             const memeUrl = response.data.url;
-
-            // Convert URL gambar menjadi format media WhatsApp
             const media = await MessageMedia.fromUrl(memeUrl);
-
-            // Kirim gambar meme ke chat
             msg.reply(media);
 
         } catch (error) {
